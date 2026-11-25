@@ -1,12 +1,48 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Logo } from "@/components/logo";
 import { MobileMenu } from "@/components/mobile-menu";
+import { getProfile, homeFor } from "@/lib/auth";
+import { signOut } from "@/app/actions/auth";
 
 export const navLinks = [
   { href: "/annonces?type=location", label: "Louer" },
   { href: "/annonces?type=vente", label: "Acheter" },
   { href: "/espace-agence", label: "Espace agence" },
 ];
+
+// Partie droite du menu : dépend de la personne connectée
+async function HeaderActions() {
+  const profile = await getProfile();
+  const user = profile ? { name: profile.full_name.split(" ")[0], home: homeFor(profile) } : null;
+
+  return (
+    <>
+      <div className="hidden items-center gap-2 md:flex">
+        {user ? (
+          <>
+            <Link href={user.home} className="rounded-lg bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-100">
+              Mon espace · {user.name}
+            </Link>
+            <form action={signOut}>
+              <button className="rounded-lg px-3 py-2 text-sm font-medium text-muted hover:bg-surface hover:text-ink">Se déconnecter</button>
+            </form>
+          </>
+        ) : (
+          <>
+            <Link href="/connexion" className="rounded-lg px-3 py-2 text-sm font-medium text-ink hover:bg-surface">
+              Se connecter
+            </Link>
+            <Link href="/inscription" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600">
+              Créer un compte
+            </Link>
+          </>
+        )}
+      </div>
+      <MobileMenu links={navLinks} user={user} signOut={signOut} />
+    </>
+  );
+}
 
 export function Header() {
   return (
@@ -20,15 +56,9 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="hidden items-center gap-2 md:flex">
-          <Link href="/connexion" className="rounded-lg px-3 py-2 text-sm font-medium text-ink hover:bg-surface">
-            Se connecter
-          </Link>
-          <Link href="/inscription" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600">
-            Créer un compte
-          </Link>
-        </div>
-        <MobileMenu links={navLinks} />
+        <Suspense fallback={<div className="h-10 w-10 md:w-56" />}>
+          <HeaderActions />
+        </Suspense>
       </div>
     </header>
   );

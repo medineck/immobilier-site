@@ -10,15 +10,19 @@ et la visite s'ajoute à l'agenda de l'agent.
 - Vercel (mise en ligne), Resend (emails)
 
 ## Lancer le site en local
+Copier `.env.example` en `.env.local` et y mettre l'adresse et la clé publique du projet Supabase, puis :
 ```bash
 npm install
 npm run dev
 ```
+
+## Base de données
+Les fichiers de `supabase/migrations/` décrivent la base (tables, sécurité). Ils sont appliqués dans l'ordre.
 Puis ouvrir http://localhost:3000
 
 ## Avancement
 - [x] Étape 1 : squelette du site (accueil, recherche, menu mobile, pages provisoires)
-- [ ] Étape 2 : inscription et connexion (agence / agents / chercheurs)
+- [x] Étape 2 : inscription et connexion (agence + directeur, agents invités, chercheurs)
 - [ ] Étape 3 : espace agence — annonces
 - [ ] Étape 4 : pages publiques (annonce, agence, résultats de recherche)
 - [ ] Étape 5 : messagerie
