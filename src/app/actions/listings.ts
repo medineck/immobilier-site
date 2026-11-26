@@ -1,7 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { LISTINGS_TAG } from "@/lib/public-data";
 import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
 import { MAX_PHOTOS, PHOTO_BUCKET } from "@/lib/listings";
@@ -81,6 +82,7 @@ export async function saveListing(_: ListingFormState, fd: FormData): Promise<Li
     if (dbError) return { error: "Impossible de créer l’annonce. Vérifiez les informations et réessayez.", values };
   }
   revalidatePath("/espace-agence/annonces");
+  updateTag(LISTINGS_TAG);
   redirect(`/espace-agence/annonces?ok=${id ? "modifiee" : "creee"}`);
 }
 
@@ -92,6 +94,7 @@ export async function deleteListing(fd: FormData) {
   const photos = data?.[0]?.photos ?? [];
   if (photos.length) await supabase.storage.from(PHOTO_BUCKET).remove(photos);
   revalidatePath("/espace-agence/annonces");
+  updateTag(LISTINGS_TAG);
   redirect(`/espace-agence/annonces?ok=${data?.length ? "supprimee" : "erreur"}`);
 }
 
@@ -103,4 +106,5 @@ export async function togglePublished(fd: FormData) {
     .update({ published: fd.get("published") === "true" })
     .eq("id", String(fd.get("id") ?? ""));
   revalidatePath("/espace-agence/annonces");
+  updateTag(LISTINGS_TAG);
 }

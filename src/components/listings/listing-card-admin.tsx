@@ -33,6 +33,11 @@ export function ListingCardAdmin({ listing, agentName, canManage }: { listing: L
             <Link href={`/espace-agence/annonces/${listing.id}/modifier`} className="rounded-lg bg-brand-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-600">
               Modifier
             </Link>
+            {listing.published && (
+              <Link href={`/annonces/${listing.id}`} className="rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:bg-surface">
+                Voir
+              </Link>
+            )}
             <form action={togglePublished}>
               <input type="hidden" name="id" value={listing.id} />
               <input type="hidden" name="published" value={String(!listing.published)} />

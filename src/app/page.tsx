@@ -1,5 +1,24 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { SearchForm } from "@/components/search-form";
+import { ListingGrid } from "@/components/listings/listing-card";
+import { getLatestListings } from "@/lib/public-data";
+
+async function Latest() {
+  const listings = await getLatestListings(6);
+  if (listings.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-16">
+      <div className="mb-6 flex items-end justify-between gap-4">
+        <h2 className="text-2xl font-bold sm:text-3xl">Dernières annonces</h2>
+        <Link href="/annonces" className="text-sm font-medium text-brand-600 hover:underline">
+          Tout voir →
+        </Link>
+      </div>
+      <ListingGrid listings={listings} />
+    </section>
+  );
+}
 
 const steps = [
   { title: "Écrivez à l’agence", text: "Depuis l’annonce, envoyez votre message en un clic. Fini l’attente au téléphone." },
@@ -13,7 +32,7 @@ export default function Home() {
   return (
     <>
       <section className="bg-gradient-to-b from-brand-50 to-white">
-        <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:pt-20 sm:pb-24">
+        <div className="mx-auto max-w-6xl px-4 pt-12 pb-12 sm:pt-20 sm:pb-16">
           <div className="max-w-2xl">
             <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-5xl">
               Trouvez un logement. Réservez la visite <span className="text-brand-600">par écrit.</span>
@@ -38,6 +57,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Suspense>
+        <Latest />
+      </Suspense>
 
       <section className="mx-auto max-w-6xl px-4 py-16">
         <h2 className="text-2xl font-bold sm:text-3xl">Comment ça marche ?</h2>

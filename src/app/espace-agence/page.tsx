@@ -78,6 +78,9 @@ async function Dashboard() {
       <p className="mt-2 text-muted">
         Vous êtes connecté(e) en tant que <strong className="text-ink">{profile.agency_role === "directeur" ? "directeur" : "agent"}</strong>.
       </p>
+      <Link href={`/agences/${profile.agency.slug}`} className="mt-3 inline-block text-sm font-medium text-brand-600 hover:underline">
+        Voir la page publique de l’agence →
+      </Link>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Team profile={profile} />
