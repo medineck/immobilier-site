@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { signUp } from "@/app/actions/auth";
-import { Alert, Field, SubmitButton } from "./ui";
+import { Alert, Field, SubmitButton, keepValuesOnSubmit } from "./ui";
 
 export function SignupForm({ initialRole }: { initialRole: "chercheur" | "agence" }) {
   const [role, setRole] = useState(initialRole);
   const [state, action, pending] = useActionState(signUp, undefined);
+  const [, startTransition] = useTransition();
   const v = state?.values ?? {};
 
   return (
-    <form action={action} className="grid gap-5">
+    <form action={action} onSubmit={keepValuesOnSubmit(action, startTransition)} className="grid gap-5">
       <fieldset className="grid grid-cols-2 gap-2">
         <legend className="mb-2 text-sm font-medium">Vous êtes…</legend>
         {(

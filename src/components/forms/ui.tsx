@@ -9,6 +9,8 @@ export function Field({
   required = true,
   readOnly,
   placeholder,
+  step,
+  min,
 }: {
   label: string;
   name: string;
@@ -19,6 +21,8 @@ export function Field({
   required?: boolean;
   readOnly?: boolean;
   placeholder?: string;
+  step?: string;
+  min?: string;
 }) {
   return (
     <label className="grid gap-1.5">
@@ -31,6 +35,8 @@ export function Field({
         required={required}
         readOnly={readOnly}
         placeholder={placeholder}
+        step={step}
+        min={min}
         className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-base outline-none read-only:bg-surface read-only:text-muted focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
       />
       {hint && <span className="text-xs text-muted">{hint}</span>}
@@ -68,4 +74,13 @@ export function AuthCard({ title, subtitle, children }: { title: string; subtitl
       <div className="mt-8">{children}</div>
     </div>
   );
+}
+
+// Envoie le formulaire sans le vider : les choix (listes, cases) restent tels quels en cas d'erreur
+export function keepValuesOnSubmit(action: (fd: FormData) => void, startTransition: (fn: () => void) => void) {
+  return (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    startTransition(() => action(fd));
+  };
 }
