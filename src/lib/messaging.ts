@@ -17,7 +17,15 @@ export type Conversation = {
   agency_last_read_at: string;
 };
 
-export type Message = { id: string; conversation_id: string; sender_id: string | null; body: string; created_at: string };
+export type Message = {
+  id: string;
+  conversation_id: string;
+  sender_id: string | null;
+  body: string;
+  created_at: string;
+  kind: "texte" | "proposition" | "visite_confirmee" | "visite_annulee";
+  meta: Record<string, unknown>;
+};
 
 export type InboxItem = Conversation & {
   unread: boolean;

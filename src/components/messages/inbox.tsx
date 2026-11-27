@@ -120,7 +120,7 @@ export async function ConversationView({ id, profile, basePath, justSent }: { id
             Message envoyé ✓ L’agence vous répondra ici. Vous recevrez aussi un email (bientôt).
           </p>
         )}
-        <Thread conversationId={c.id} initialMessages={messages} currentUserId={profile.id} names={names} fallbackName={c.agency.name} />
+        <Thread conversationId={c.id} initialMessages={messages} currentUserId={profile.id} names={names} fallbackName={c.agency.name} isSeeker={!isAgency} />
       </div>
     </div>
   );

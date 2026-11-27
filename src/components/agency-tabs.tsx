@@ -7,6 +7,7 @@ const tabs = [
   { href: "/espace-agence", label: "Tableau de bord", exact: true },
   { href: "/espace-agence/annonces", label: "Annonces" },
   { href: "/espace-agence/messages", label: "Messages" },
+  { href: "/espace-agence/disponibilites", label: "Disponibilités" },
 ];
 
 export function AgencyTabs({ static: isStatic }: { static?: boolean }) {
