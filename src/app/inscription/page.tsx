@@ -6,8 +6,8 @@ import { AuthCard } from "@/components/forms/ui";
 export const metadata: Metadata = { title: "Créer un compte" };
 
 async function Form({ searchParams }: { searchParams: PageProps<"/inscription">["searchParams"] }) {
-  const { role } = await searchParams;
-  return <SignupForm initialRole={role === "agence" ? "agence" : "chercheur"} />;
+  const { role, next } = await searchParams;
+  return <SignupForm initialRole={role === "agence" ? "agence" : "chercheur"} next={typeof next === "string" ? next : ""} />;
 }
 
 export default function Page(props: PageProps<"/inscription">) {

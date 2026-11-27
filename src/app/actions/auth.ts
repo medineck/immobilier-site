@@ -61,6 +61,8 @@ export async function signUp(_: FormState, fd: FormData): Promise<FormState> {
   if (error) return { error: translate(error.message), values };
   // Supabase renvoie un compte sans identités si l'email existe déjà
   if (data.user && data.user.identities?.length === 0) return { error: translate("already registered"), values };
+  const next = String(fd.get("next") ?? "");
+  if (role === "chercheur" && next.startsWith("/") && !next.startsWith("//")) redirect(next);
   redirect(role === "agence" ? "/espace-agence" : "/mon-compte");
 }
 

@@ -25,7 +25,7 @@ Puis ouvrir http://localhost:3000
 - [x] Étape 2 : inscription et connexion (agence + directeur, agents invités, chercheurs)
 - [x] Étape 3 : espace agence — annonces (photos, agent responsable, masquer/supprimer)
 - [x] Étape 4 : pages publiques (annonce avec galerie, page agence, recherche par ville avec tri et pages)
-- [ ] Étape 5 : messagerie
+- [x] Étape 5 : messagerie en direct (contact depuis l’annonce, boîtes chercheur et agence, non lus)
 - [ ] Étape 6 : créneaux de visite
 - [ ] Étape 7 : agenda des agents
 - [ ] Étape 8 : emails de notification

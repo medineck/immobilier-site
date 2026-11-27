@@ -5,7 +5,7 @@ import { useActionState, useState, useTransition } from "react";
 import { signUp } from "@/app/actions/auth";
 import { Alert, Field, SubmitButton, keepValuesOnSubmit } from "./ui";
 
-export function SignupForm({ initialRole }: { initialRole: "chercheur" | "agence" }) {
+export function SignupForm({ initialRole, next = "" }: { initialRole: "chercheur" | "agence"; next?: string }) {
   const [role, setRole] = useState(initialRole);
   const [state, action, pending] = useActionState(signUp, undefined);
   const [, startTransition] = useTransition();
@@ -13,6 +13,7 @@ export function SignupForm({ initialRole }: { initialRole: "chercheur" | "agence
 
   return (
     <form action={action} onSubmit={keepValuesOnSubmit(action, startTransition)} className="grid gap-5">
+      <input type="hidden" name="next" value={next} />
       <fieldset className="grid grid-cols-2 gap-2">
         <legend className="mb-2 text-sm font-medium">Vous êtes…</legend>
         {(

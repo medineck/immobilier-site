@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Logo } from "@/components/logo";
 import { MobileMenu } from "@/components/mobile-menu";
 import { getProfile, homeFor } from "@/lib/auth";
+import { countUnread } from "@/lib/messaging";
 import { signOut } from "@/app/actions/auth";
 
 export const navLinks = [
@@ -14,13 +15,29 @@ export const navLinks = [
 // Partie droite du menu : dépend de la personne connectée
 async function HeaderActions() {
   const profile = await getProfile();
-  const user = profile ? { name: profile.full_name.split(" ")[0], home: homeFor(profile) } : null;
+  const unread = profile ? await countUnread(profile) : 0;
+  const user = profile
+    ? {
+        name: profile.full_name.split(" ")[0],
+        home: homeFor(profile),
+        messages: profile.role === "agence" ? "/espace-agence/messages" : "/messages",
+        unread,
+      }
+    : null;
 
   return (
     <>
       <div className="hidden items-center gap-2 md:flex">
         {user ? (
           <>
+            <Link href={user.messages} className="relative rounded-lg px-3 py-2 text-sm font-medium text-ink hover:bg-surface">
+              Messages
+              {user.unread > 0 && (
+                <span className="ml-1.5 rounded-full bg-brand-500 px-1.5 py-0.5 text-xs font-bold text-white" aria-label={`${user.unread} non lu(s)`}>
+                  {user.unread}
+                </span>
+              )}
+            </Link>
             <Link href={user.home} className="rounded-lg bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-100">
               Mon espace · {user.name}
             </Link>

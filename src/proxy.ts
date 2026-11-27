@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Pages réservées aux personnes connectées
-const PROTECTED = ["/espace-agence", "/mon-compte"];
+const PROTECTED = ["/espace-agence", "/mon-compte", "/messages"];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

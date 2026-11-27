@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-type User = { name: string; home: string } | null;
+type User = { name: string; home: string; messages: string; unread: number } | null;
 
 export function MobileMenu({
   links,
@@ -24,8 +24,9 @@ export function MobileMenu({
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-        className="grid size-10 place-items-center rounded-lg text-ink hover:bg-surface"
+        className="relative grid size-10 place-items-center rounded-lg text-ink hover:bg-surface"
       >
+        {!open && !!user?.unread && <span className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-brand-500 ring-2 ring-white" aria-label="Messages non lus" />}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-6" aria-hidden>
           {open ? <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" /> : <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />}
         </svg>
@@ -42,6 +43,10 @@ export function MobileMenu({
           <div className="grid gap-2 border-t border-line pt-4">
             {user ? (
               <>
+                <Link href={user.messages} onClick={close} className="flex items-center justify-center gap-2 rounded-lg border border-line px-4 py-3 font-medium">
+                  Messages
+                  {user.unread > 0 && <span className="rounded-full bg-brand-500 px-1.5 py-0.5 text-xs font-bold text-white">{user.unread}</span>}
+                </Link>
                 <Link href={user.home} onClick={close} className="rounded-lg bg-brand-500 px-4 py-3 text-center font-semibold text-white">
                   Mon espace · {user.name}
                 </Link>

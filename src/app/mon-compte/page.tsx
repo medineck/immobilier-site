@@ -22,12 +22,17 @@ async function Account() {
           </dl>
           <p className="mt-4 text-xs text-muted">Ces coordonnées sont transmises uniquement aux agences que vous contactez.</p>
         </section>
-        <section className="rounded-2xl border border-dashed border-line p-6">
+        <section className="rounded-2xl border border-line p-6">
           <h2 className="font-semibold">Mes messages et visites</h2>
-          <p className="mt-2 text-sm text-muted">Vos conversations avec les agences et vos visites apparaîtront ici (étapes 5 à 7).</p>
-          <Link href="/annonces" className="mt-4 inline-block rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600">
-            Voir les annonces
-          </Link>
+          <p className="mt-2 text-sm text-muted">Retrouvez vos conversations avec les agences. Vos visites confirmées apparaîtront ici bientôt.</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/messages" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600">
+              Mes messages
+            </Link>
+            <Link href="/annonces" className="rounded-lg border border-line px-4 py-2 text-sm font-medium hover:bg-surface">
+              Voir les annonces
+            </Link>
+          </div>
         </section>
       </div>
     </>

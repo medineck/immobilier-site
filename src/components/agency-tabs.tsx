@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const tabs = [
   { href: "/espace-agence", label: "Tableau de bord", exact: true },
   { href: "/espace-agence/annonces", label: "Annonces" },
+  { href: "/espace-agence/messages", label: "Messages" },
 ];
 
 export function AgencyTabs({ static: isStatic }: { static?: boolean }) {
@@ -26,7 +27,6 @@ export function AgencyTabs({ static: isStatic }: { static?: boolean }) {
           </Link>
         );
       })}
-      <span className="px-3 py-3 text-sm whitespace-nowrap text-muted/60">Messages · bientôt</span>
       <span className="px-3 py-3 text-sm whitespace-nowrap text-muted/60">Agenda · bientôt</span>
     </nav>
   );

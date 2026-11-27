@@ -85,12 +85,15 @@ async function Dashboard() {
       <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]">
         <Team profile={profile} />
         <aside className="grid content-start gap-4">
+          <Link href="/espace-agence/messages" className="rounded-2xl border border-line p-5 hover:border-brand-500 hover:bg-brand-50">
+            <p className="font-semibold">Messages →</p>
+            <p className="text-sm text-muted">Les demandes des chercheurs</p>
+          </Link>
           <Link href="/espace-agence/annonces" className="rounded-2xl border border-line p-5 hover:border-brand-500 hover:bg-brand-50">
             <p className="font-semibold">Annonces →</p>
             <p className="text-sm text-muted">Créer et gérer les annonces de l’agence</p>
           </Link>
           {[
-            { t: "Messages", d: "Les demandes des chercheurs", s: 5 },
             { t: "Agenda", d: "Vos visites confirmées", s: 7 },
           ].map((c) => (
             <div key={c.t} className="rounded-2xl border border-dashed border-line p-5">
