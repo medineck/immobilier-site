@@ -93,15 +93,10 @@ async function Dashboard() {
             <p className="font-semibold">Annonces →</p>
             <p className="text-sm text-muted">Créer et gérer les annonces de l’agence</p>
           </Link>
-          {[
-            { t: "Agenda", d: "Vos visites confirmées", s: 7 },
-          ].map((c) => (
-            <div key={c.t} className="rounded-2xl border border-dashed border-line p-5">
-              <p className="font-semibold">{c.t}</p>
-              <p className="text-sm text-muted">{c.d}</p>
-              <p className="mt-2 text-xs text-brand-700">Bientôt · étape {c.s}</p>
-            </div>
-          ))}
+          <Link href="/espace-agence/agenda" className="rounded-2xl border border-line p-5 hover:border-brand-500 hover:bg-brand-50">
+            <p className="font-semibold">Agenda →</p>
+            <p className="text-sm text-muted">Vos visites confirmées et vos moments bloqués</p>
+          </Link>
         </aside>
       </div>
     </>

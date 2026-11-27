@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { bookVisit, getSlots, type SlotsResult } from "@/app/actions/visits";
+import { VisitActions } from "@/components/visits/visit-actions";
 import { dayKey, fmtDayLong, fmtDayShort, fmtTime, fmtVisit } from "@/lib/visits";
 
 // Fenêtre de créneaux affichée dans la conversation après « Proposer une visite »
@@ -53,7 +54,7 @@ export function ProposalCard({ conversationId, isSeeker, active, version }: { co
       if (res.error) {
         setError(res.error);
         await load();
-      } else setData((d) => ({ ...(d as SlotsResult), visit: { starts_at: chosen } }));
+      } else await load();
     });
   }
 
@@ -69,9 +70,14 @@ export function ProposalCard({ conversationId, isSeeker, active, version }: { co
 
   if (data.visit)
     return shell(
-      <p className="mt-2 rounded-xl bg-white px-3 py-2.5 text-sm">
-        ✅ Visite réservée le <strong>{fmtVisit(data.visit.starts_at)}</strong>
-      </p>,
+      <>
+        <p className="mt-2 rounded-xl bg-white px-3 py-2.5 text-sm">
+          ✅ Visite réservée le <strong>{fmtVisit(data.visit.starts_at)}</strong>
+        </p>
+        <div className="mt-2">
+          <VisitActions visitId={data.visit.id} label={fmtVisit(data.visit.starts_at)} canMove={!isSeeker} onDone={load} />
+        </div>
+      </>,
     );
 
   if (!isSeeker)

@@ -105,7 +105,7 @@ export function Thread({
               ) : m.kind === "visite_confirmee" || m.kind === "visite_annulee" ? (
                 <p
                   className={`my-1 self-center rounded-xl px-4 py-2.5 text-center text-sm font-medium ${
-                    m.kind === "visite_confirmee" ? "bg-brand-50 text-brand-700" : "bg-red-50 text-red-800"
+                    m.kind === "visite_confirmee" ? "bg-brand-50 text-brand-700" : m.meta?.moved ? "bg-amber-50 text-amber-800" : "bg-red-50 text-red-800"
                   }`}
                 >
                   {m.body}

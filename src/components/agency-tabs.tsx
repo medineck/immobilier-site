@@ -7,6 +7,7 @@ const tabs = [
   { href: "/espace-agence", label: "Tableau de bord", exact: true },
   { href: "/espace-agence/annonces", label: "Annonces" },
   { href: "/espace-agence/messages", label: "Messages" },
+  { href: "/espace-agence/agenda", label: "Agenda" },
   { href: "/espace-agence/disponibilites", label: "Disponibilités" },
 ];
 
@@ -28,7 +29,6 @@ export function AgencyTabs({ static: isStatic }: { static?: boolean }) {
           </Link>
         );
       })}
-      <span className="px-3 py-3 text-sm whitespace-nowrap text-muted/60">Agenda · bientôt</span>
     </nav>
   );
 }

@@ -2,6 +2,48 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { requireProfile } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+import { fmtVisit } from "@/lib/visits";
+import { VisitActions } from "@/components/visits/visit-actions";
+
+// Visites à venir du chercheur
+async function MyVisits() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("visits")
+    .select("id, starts_at, listing_title, conversation_id, agency:agencies(name)")
+    .eq("status", "confirmee")
+    .gt("starts_at", new Date().toISOString())
+    .order("starts_at");
+  const visits = (data ?? []) as unknown as { id: string; starts_at: string; listing_title: string; conversation_id: string; agency: { name: string } | null }[];
+  return (
+    <section className="mt-8">
+      <h2 className="text-lg font-semibold">Mes visites à venir</h2>
+      {visits.length === 0 ? (
+        <p className="mt-3 rounded-2xl border border-dashed border-line p-6 text-center text-sm text-muted">
+          Aucune visite prévue. Écrivez à une agence depuis une annonce : elle vous proposera des créneaux.
+        </p>
+      ) : (
+        <ul className="mt-3 grid gap-3">
+          {visits.map((v) => (
+            <li key={v.id} className="rounded-2xl border border-line p-4">
+              <p className="font-semibold first-letter:uppercase">📅 {fmtVisit(v.starts_at)}</p>
+              <p className="text-sm text-muted">
+                {v.listing_title} · {v.agency?.name}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line pt-3">
+                <Link href={`/messages/${v.conversation_id}`} className="text-sm font-medium text-brand-700 hover:underline">
+                  Conversation avec l’agence →
+                </Link>
+                <VisitActions visitId={v.id} label={fmtVisit(v.starts_at)} canMove={false} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
 
 export const metadata: Metadata = { title: "Mon compte" };
 
@@ -24,7 +66,7 @@ async function Account() {
         </section>
         <section className="rounded-2xl border border-line p-6">
           <h2 className="font-semibold">Mes messages et visites</h2>
-          <p className="mt-2 text-sm text-muted">Retrouvez vos conversations avec les agences. Vos visites confirmées apparaîtront ici bientôt.</p>
+          <p className="mt-2 text-sm text-muted">Retrouvez vos conversations avec les agences, et choisissez vos créneaux de visite.</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href="/messages" className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600">
               Mes messages
@@ -35,6 +77,7 @@ async function Account() {
           </div>
         </section>
       </div>
+      <MyVisits />
     </>
   );
 }
