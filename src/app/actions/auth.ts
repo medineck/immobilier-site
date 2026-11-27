@@ -1,9 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
+import { notifyInvitation, siteUrl } from "@/lib/email/notify";
 
 export type FormState = { error?: string; ok?: string; values?: Record<string, string> } | undefined;
 
@@ -121,13 +123,20 @@ export async function inviteAgent(_: FormState, fd: FormData): Promise<FormState
   const { data: existing } = await supabase.from("profiles").select("id").eq("email", email).maybeSingle();
   if (existing) return { error: "Cette personne fait déjà partie de votre agence.", values: { email } };
 
-  const { error } = await supabase.from("agency_invitations").insert({ agency_id: profile.agency.id, email, invited_by: profile.id });
+  const { data: inv, error } = await supabase
+    .from("agency_invitations")
+    .insert({ agency_id: profile.agency.id, email, invited_by: profile.id })
+    .select("token")
+    .single();
   if (error) {
     if (error.code === "23505") return { error: "Une invitation a déjà été créée pour cet email.", values: { email } };
     return { error: "Impossible de créer l’invitation. Réessayez.", values: { email } };
   }
+  const link = `${await siteUrl()}/invitation/${inv.token}`;
+  const agencyName = profile.agency.name;
+  after(() => notifyInvitation(email, agencyName, profile.full_name, link));
   revalidatePath("/espace-agence");
-  return { ok: `Invitation créée pour ${email}. Copiez le lien ci-dessous et envoyez-le à votre agent.` };
+  return { ok: `Invitation envoyée par email à ${email}. Vous pouvez aussi copier le lien ci-dessous.` };
 }
 
 export async function cancelInvitation(fd: FormData) {
@@ -135,4 +144,31 @@ export async function cancelInvitation(fd: FormData) {
   const supabase = await createClient();
   await supabase.from("agency_invitations").delete().eq("id", String(fd.get("id")));
   revalidatePath("/espace-agence");
+}
+
+// Mot de passe oublié : envoie un lien de réinitialisation (sans révéler si l'email existe)
+export async function requestPasswordReset(_: FormState, fd: FormData): Promise<FormState> {
+  const email = String(fd.get("email") ?? "").trim().toLowerCase();
+  if (!EMAIL_RE.test(email)) return { error: "Indiquez une adresse email valide.", values: { email } };
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${await siteUrl()}/auth/confirm?next=/nouveau-mot-de-passe` });
+  if (error && /rate limit|too many/i.test(error.message)) return { error: translate(error.message), values: { email } };
+  if (error) console.error("[mot de passe oublié]", error.message);
+  return { ok: "Si un compte existe avec cette adresse, vous allez recevoir un email avec un lien pour choisir un nouveau mot de passe." };
+}
+
+// Nouveau mot de passe (après avoir cliqué sur le lien reçu par email)
+export async function updatePassword(_: FormState, fd: FormData): Promise<FormState> {
+  const password = String(fd.get("password") ?? "");
+  if (password.length < 8) return { error: "Le mot de passe doit contenir au moins 8 caractères." };
+  if (password !== String(fd.get("confirm") ?? "")) return { error: "Les deux mots de passe ne sont pas identiques." };
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Le lien a expiré. Refaites une demande de nouveau mot de passe." };
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) return { error: /different|same/i.test(error.message) ? "Choisissez un mot de passe différent de l’ancien." : translate(error.message) };
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  redirect(profile?.role === "agence" ? "/espace-agence?mdp=1" : "/mon-compte?mdp=1");
 }

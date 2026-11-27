@@ -117,7 +117,7 @@ export async function ConversationView({ id, profile, basePath, justSent }: { id
       <div className="mx-auto flex w-full max-w-3xl flex-col px-4">
         {justSent && !isAgency && (
           <p role="status" className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-700">
-            Message envoyé ✓ L’agence vous répondra ici. Vous recevrez aussi un email (bientôt).
+            Message envoyé ✓ L’agence vous répondra ici, et vous serez prévenu(e) par email.
           </p>
         )}
         <Thread conversationId={c.id} initialMessages={messages} currentUserId={profile.id} names={names} fallbackName={c.agency.name} isSeeker={!isAgency} />

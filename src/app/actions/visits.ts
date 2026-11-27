@@ -1,10 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireProfile } from "@/lib/auth";
 import { DAYS, type Weekly } from "@/lib/visits";
 import type { Message } from "@/lib/messaging";
+import { notifyProposal, notifyVisitCancelled, notifyVisitConfirmed } from "@/lib/email/notify";
 
 const ERRORS: Record<string, string> = {
   DEJA_RESERVEE: "Une visite est déjà prévue pour ce bien.",
@@ -20,6 +22,7 @@ export async function proposeVisit(conversationId: string): Promise<{ message?: 
   const { data: id, error } = await supabase.rpc("propose_visit", { p_conversation: conversationId });
   if (error) return { error: translate(error.message) };
   const { data } = await supabase.from("messages").select("*").eq("id", id).single();
+  after(() => notifyProposal(supabase, conversationId));
   return { message: data as Message };
 }
 
@@ -43,8 +46,10 @@ export async function getSlots(conversationId: string): Promise<SlotsResult> {
 export async function bookVisit(conversationId: string, start: string): Promise<{ ok?: true; error?: string }> {
   await requireProfile("chercheur");
   const supabase = await createClient();
-  const { error } = await supabase.rpc("book_visit", { p_conversation: conversationId, p_start: start });
+  const { data: visitId, error } = await supabase.rpc("book_visit", { p_conversation: conversationId, p_start: start });
   if (error) return { error: translate(error.message) };
+  const { data: visit } = await supabase.from("visits").select("id, starts_at, ends_at").eq("id", visitId).single();
+  if (visit) after(() => notifyVisitConfirmed(supabase, conversationId, visit));
   revalidatePath("/messages");
   return { ok: true };
 }
@@ -91,10 +96,12 @@ function refreshVisits() {
 
 // Annuler une visite (client ou agence)
 export async function cancelVisit(visitId: string): Promise<{ ok?: true; error?: string }> {
-  await requireProfile();
+  const profile = await requireProfile();
   const supabase = await createClient();
+  const { data: visit } = await supabase.from("visits").select("id, starts_at, ends_at, conversation_id, seeker_id").eq("id", visitId).maybeSingle();
   const { error } = await supabase.rpc("cancel_visit", { p_visit: visitId });
   if (error) return { error: agendaError(error.message) };
+  if (visit) after(() => notifyVisitCancelled(supabase, visit.conversation_id, visit, visit.seeker_id === profile.id));
   refreshVisits();
   return { ok: true };
 }
@@ -103,8 +110,10 @@ export async function cancelVisit(visitId: string): Promise<{ ok?: true; error?:
 export async function moveVisit(visitId: string): Promise<{ ok?: true; error?: string }> {
   await requireProfile("agence");
   const supabase = await createClient();
+  const { data: visit } = await supabase.from("visits").select("starts_at, conversation_id").eq("id", visitId).maybeSingle();
   const { error } = await supabase.rpc("move_visit", { p_visit: visitId });
   if (error) return { error: agendaError(error.message) };
+  if (visit) after(() => notifyProposal(supabase, visit.conversation_id, true, visit.starts_at));
   refreshVisits();
   return { ok: true };
 }

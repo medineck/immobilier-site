@@ -28,5 +28,5 @@ Puis ouvrir http://localhost:3000
 - [x] Étape 5 : messagerie en direct (contact depuis l’annonce, boîtes chercheur et agence, non lus)
 - [x] Étape 6 : visites — disponibilités de l’agent, « Proposer une visite », choix du créneau par le client, confirmation immédiate
 - [x] Étape 7 : agenda (vue semaine, équipe pour le directeur, déplacer/annuler, moments bloqués, « Mes visites » du client)
-- [ ] Étape 8 : emails de notification
+- [x] Étape 8 : emails (messages, proposition, confirmation avec fichier agenda, déplacement, annulation, rappel la veille, invitation, mot de passe oublié)
 - [ ] Étape 9 : finitions et mise en ligne

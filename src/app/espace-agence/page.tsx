@@ -38,7 +38,7 @@ async function Team({ profile }: { profile: Profile }) {
         <div className="mt-6 border-t border-line pt-6">
           <h3 className="font-semibold">Inviter un agent</h3>
           <p className="mt-1 mb-3 text-sm text-muted">
-            Saisissez son email : un lien d’invitation est créé. Envoyez-le-lui (email, SMS…). Bientôt, il sera envoyé automatiquement.
+            Saisissez son email : il reçoit un lien pour créer son compte. Vous pouvez aussi copier ce lien et l’envoyer vous-même (SMS…).
           </p>
           <InviteForm />
           {!!invitations?.length && (
