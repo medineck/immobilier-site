@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireProfile } from "@/lib/auth";
-import type { Message } from "@/lib/messaging";
+import { getProfile, requireProfile } from "@/lib/auth";
+import { countUnread, type Message } from "@/lib/messaging";
 import { notifyNewMessage } from "@/lib/email/notify";
 
 export type ContactState = { error?: string; body?: string } | undefined;
@@ -50,4 +50,10 @@ export async function markRead(conversationId: string) {
   await requireProfile();
   const supabase = await createClient();
   await supabase.rpc("mark_conversation_read", { p_conversation: conversationId });
+}
+
+// Nombre de conversations non lues (pour la pastille, mise à jour en direct)
+export async function getUnreadCount(): Promise<number> {
+  const profile = await getProfile();
+  return profile ? countUnread(profile) : 0;
 }

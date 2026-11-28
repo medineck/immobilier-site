@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { markRead, sendMessage } from "@/app/actions/messages";
 import { proposeVisit } from "@/app/actions/visits";
 import { ProposalCard } from "./proposal-card";
+import { refreshUnread } from "@/components/unread";
 import type { Message } from "@/lib/messaging";
 
 const timeFmt = new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" });
@@ -33,6 +34,11 @@ export function Thread({
 
   const add = (m: Message) => setMessages((ms) => (ms.some((x) => x.id === m.id) ? ms : [...ms, m]));
 
+  // À l'ouverture : la conversation est lue, la pastille se met à jour
+  useEffect(() => {
+    markRead(conversationId).then(refreshUnread);
+  }, [conversationId]);
+
   // Réception des nouveaux messages en direct
   useEffect(() => {
     const supabase = createClient();
@@ -48,7 +54,7 @@ export function Thread({
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` }, (payload) => {
           const m = payload.new as Message;
           add(m);
-          if (m.sender_id !== currentUserId) markRead(conversationId);
+          if (m.sender_id !== currentUserId) markRead(conversationId).then(refreshUnread);
         })
         .subscribe();
     })();

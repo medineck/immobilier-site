@@ -4,6 +4,7 @@ import { Logo } from "@/components/logo";
 import { MobileMenu } from "@/components/mobile-menu";
 import { getProfile, homeFor } from "@/lib/auth";
 import { countUnread } from "@/lib/messaging";
+import { UnreadBadge, UnreadWatcher } from "@/components/unread";
 import { signOut } from "@/app/actions/auth";
 
 export const navLinks = [
@@ -32,11 +33,7 @@ async function HeaderActions() {
           <>
             <Link href={user.messages} className="relative rounded-lg px-3 py-2 text-sm font-medium text-ink hover:bg-surface">
               Messages
-              {user.unread > 0 && (
-                <span className="ml-1.5 rounded-full bg-brand-500 px-1.5 py-0.5 text-xs font-bold text-white" aria-label={`${user.unread} non lu(s)`}>
-                  {user.unread}
-                </span>
-              )}
+              <UnreadBadge initial={user.unread} className="ml-1.5" />
             </Link>
             <Link href={user.home} className="rounded-lg bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-100">
               Mon espace · {user.name}
@@ -57,6 +54,7 @@ async function HeaderActions() {
         )}
       </div>
       <MobileMenu links={navLinks} user={user} signOut={signOut} />
+      {profile && <UnreadWatcher initial={unread} userId={profile.id} />}
     </>
   );
 }

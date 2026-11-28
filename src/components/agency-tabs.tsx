@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UnreadBadge } from "@/components/unread";
 
 const tabs = [
   { href: "/espace-agence", label: "Tableau de bord", exact: true },
@@ -26,6 +27,7 @@ export function AgencyTabs({ static: isStatic }: { static?: boolean }) {
             className={`border-b-2 px-3 py-3 text-sm font-medium whitespace-nowrap ${active ? "border-brand-500 text-ink" : "border-transparent text-muted hover:text-ink"}`}
           >
             {t.label}
+            {t.href === "/espace-agence/messages" && <UnreadBadge className="ml-1.5" />}
           </Link>
         );
       })}
