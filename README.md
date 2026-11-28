@@ -4,6 +4,8 @@ Site d'annonces immobilières (France) où l'on demande et réserve ses visites 
 le chercheur écrit à l'agence depuis l'annonce, l'agent propose des créneaux, le client en valide un,
 et la visite s'ajoute à l'agenda de l'agent.
 
+**Site en ligne (test) :** https://immobilier-site-phi.vercel.app
+
 ## Technologies
 - Next.js (pages du site) + Tailwind CSS (design)
 - Supabase (comptes, base de données, messagerie en temps réel) — à partir de l'étape 2
